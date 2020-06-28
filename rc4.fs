@@ -7,6 +7,9 @@ create rc4-S 256 allot
 create rc4-i
 create rc4-j
 
+: rc4-Si> ( -- S[i] ) rc4-S rc4-i c@ + c@ ;
+: rc4-Sj> ( -- S[j] ) rc4-S rc4-j c@ + c@ ;
+
 : rc4-ksa { keystr keylen -- }
     256 0 do i rc4-S i + c! loop
     0 rc4-j c!
@@ -25,9 +28,9 @@ create rc4-j
 
 : rc4-prga ( -- k )
     rc4-i c@ 1 + 256 mod rc4-i c!
-    rc4-j c@ rc4-S rc4-i c@ + c@ + 256 mod rc4-j c!
+    rc4-j c@ rc4-Si> + 256 mod rc4-j c!
     rc4-S rc4-i c@ rc4-j c@ rc4-swap
-    rc4-S rc4-S rc4-i c@ + c@ rc4-S rc4-j c@ + c@ + 256 mod + c@ ;
+    rc4-S rc4-Si> rc4-Sj> + 256 mod + c@ ;
 
 : rc4-go ( txt txtlen key keylen )
     rc4-ksa

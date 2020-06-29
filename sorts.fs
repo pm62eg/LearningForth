@@ -12,3 +12,4 @@
     1 - repeat drop ;
 
 \ s" abracadabra" bubblesort \ type
+\ s" The quick brown fox" bubblesort \ type

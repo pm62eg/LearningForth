@@ -27,9 +27,10 @@ s" xoshiro256ss.fs" required
     dup occupied? if
        2drop false exit then
     2dup leftgreater? if
-    2 drop false exit then
-    rightsmaller? if
-    false exit then true ;
+       2drop false exit then
+    2dup rightsmaller? if
+       2drop false exit then
+    2drop true ;
 
 : randletter ( -- c )
     here 10 + @                     \ get random value
@@ -37,9 +38,15 @@ s" xoshiro256ss.fs" required
     here 10 + !                     \ save rest of random value
     [char] a + ;                    \ adjust return character
 
-: getpos ( X -- X n )               \ print 'X' and ask for 0 to 9
-    ." pos for '" dup emit ." '? "
-    key [char] 0 - cr ;             \ TODO validation
+: prompt ( c -- )                   \ prompt for c
+    ." pos for '" emit ." '? " ;
+
+: getmove ( -- n )                  \ get player's move
+    begin
+       key dup
+       [char] 0 < over [char] 9 > or while
+       drop
+    repeat dup emit cr [char] 0 - ;
 
 : gamescore ( -- n )
     0 10 0 do
@@ -53,7 +60,7 @@ s" xoshiro256ss.fs" required
     cr ." Can you score 10 points?" cr ." 0 1 2 3 4 5 6 7 8 9" cr
     begin
        printgame
-       randletter getpos
+       randletter dup prompt getmove
        2dup validmove? dup if
            -rot here + c! else
            -rot 2drop then

@@ -32,9 +32,9 @@ s" xoshiro256ss.fs" required
     false exit then true ;
 
 : randletter ( -- c )
-    here 12 + @                     \ get random value
+    here 10 + @                     \ get random value
     26 /mod                         \ mod and quotient
-    here 12 + !                     \ save rest of random value
+    here 10 + !                     \ save rest of random value
     [char] a + ;                    \ adjust return character
 
 : getpos ( X -- X n )               \ print 'X' and ask for 0 to 9
@@ -48,9 +48,9 @@ s" xoshiro256ss.fs" required
 
 : game10 ( -- )
    xoshiro256-timeseed
-   xoshiro256ss here 12 + !         \ save 64 bits
+   xoshiro256ss here 10 + !         \ save 64 bits
    here 10 [char] - fill
-   cr ." 0 1 2 3 4 5 6 7 8 9" cr
+   cr ." Can you score 10 points?" cr ." 0 1 2 3 4 5 6 7 8 9" cr
    begin
       printgame
       randletter getpos

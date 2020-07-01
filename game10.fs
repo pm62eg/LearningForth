@@ -12,7 +12,9 @@ s" xoshiro256ss.fs" required
 
 \ xoshiro256ss returns a 64-bit pseudo random number
 : saverandom64 ( -- )
-    xoshiro256ss here 10 + ! ;
+    xoshiro256ss
+    ." game number: " dup . cr         \ comment this line out
+    here 10 + ! ;
 
 \ Assume here+10 starts off with a large enough number < 26^10
 \ otherwise the last letters will all be 'a'
@@ -74,8 +76,8 @@ s" xoshiro256ss.fs" required
 
 \ Print header, get random number, initialize playing board with 10 '-'
 : boardinit ( -- )
-    ." 0 1 2 3 4 5 6 7 8 9" cr
     saverandom64
+    ." 0 1 2 3 4 5 6 7 8 9" cr
     here 10 [char] - fill ;
 
 \ Seed PRNG, print game intro

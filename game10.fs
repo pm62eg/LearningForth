@@ -94,9 +94,10 @@ s" xoshiro256ss.fs" required
        randletter dup prompt getmove
        2dup validmove? dup if
            -rot here + c! else
-           -rot 2drop then
+           -rot 2drop then             \ TODO 'gamescore' just once
     invert gamescore 10 = or until
-    ." You scored " gamescore . ." points." cr ;
+    gamescore dup 10 = if ." CONGRATULATIONS!! " then
+    ." You scored " . ." points." cr ;
 
 : game10 ( -- )
     gameinit

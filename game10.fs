@@ -72,18 +72,22 @@ s" xoshiro256ss.fs" required
        i occupied? if 1 + then
     loop ;
 
-\ Print intro, initialize playing board with 10 '-'
+\ Print header, get random number, initialize playing board with 10 '-'
 : boardinit ( -- )
+    ." 0 1 2 3 4 5 6 7 8 9" cr
+    saverandom64
+    here 10 [char] - fill ;
+
+\ Seed PRNG, print game intro
+: gameinit ( -- )
+    xoshiro256-timeseed                \ seed random number generator
     cr
     ." Place random letters in free cells," cr
     ." keeping them in alphabetical order." cr
     ." Can you score 10 points?" cr
-    cr
-    ." 0 1 2 3 4 5 6 7 8 9" cr
-    here 10 [char] - fill ;
+    cr ;
 
 : playgame ( -- )
-    saverandom64
     boardinit
     begin
        printboard
@@ -95,8 +99,8 @@ s" xoshiro256ss.fs" required
     ." You scored " gamescore . ." points." cr ;
 
 : game10 ( -- )
-    xoshiro256-timeseed                \ seed random number generator
+    gameinit
     begin
        playgame
        cr ." Another (Y/n)? "
-    key [char] n = until ;
+    key dup emit cr [char] n = until ;

@@ -8,7 +8,7 @@
 \ The score is the number of filled-in cells.
 
 \ My (possibly faulty) implementation of xoshiro256ss
-s" xoshiro256ss.fs" required
+s" xoshiro.fs" required
 
 \ xoshiro256ss returns a 64-bit pseudo random number
 : saverandom64 ( -- )
@@ -82,7 +82,7 @@ s" xoshiro256ss.fs" required
 
 \ Seed PRNG, print game intro
 : gameinit ( -- )
-    xoshiro256-timeseed                \ seed random number generator
+    xoshiro-timeseed                   \ seed random number generator
     cr
     ." Place random letters in free cells," cr
     ." keeping them in alphabetical order." cr

@@ -10,7 +10,10 @@
 variable gameboard 9 allot             \ space for 10 chars
 variable PRNGstate
 
-time&date + * + * + PRNGstate !
+: PRNGseed ( -- )
+    time&date + * +                    \ (Y + M) * D + h
+    time&date + + + + +                \ Y + M + D + h + m + s
+    + * + PRNGstate ! ;                \ don't multiply by 0
 
 : PRNGnext ( -- u )                    \ adequate quality generator
     PRNGstate @ 1103515245 * 12345 + dup PRNGstate !
@@ -77,6 +80,7 @@ time&date + * + * + PRNGstate !
 
 \ Print game intro
 : gameinit ( -- )
+    PRNGseed
     cr
     ." Place random letters in free cells," cr
     ." keeping them in alphabetical order." cr

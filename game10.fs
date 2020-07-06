@@ -7,44 +7,40 @@
 \ When there is no possible move, the game is over.
 \ The score is the number of filled-in cells.
 
-\ My (possibly faulty) implementation of xoshiro256ss
-s" xoshiro.fs" required
+variable gameboard 9 allot             \ space for 10 cells
+variable PRNGstate
 
-\ xoshiro256ss returns a 64-bit pseudo random number
-: saverandom64 ( -- )
-    xoshiro256ss
-    ." game number: " dup . cr         \ comment this line out
-    here 10 + ! ;
+time&date + * + * + PRNGstate !
 
-\ Assume here+10 starts off with a large enough number < 26^10
-\ otherwise the last letters will all be 'a'
+: PRNGnext ( -- u )                    \ adequate quality generator
+    PRNGstate @ 1103515245 * 12345 + dup PRNGstate !
+    16 rshift 32767 and ;
+
 : randletter ( -- c )
-    here 10 + @                        \ get random value
-    26 /mod                            \ mod and quotient
-    here 10 + !                        \ save rest of random value
+    PRNGnext 26 mod                    \ yeah, yeah: modulo bias
     [char] a + ;                       \ adjust return character
 
 : printcell ( n -- )
-    here + c@ emit 32 emit ;
+    gameboard + c@ emit 32 emit ;
 
 : printboard ( -- )
     10 0 do i printcell loop ;
 
 : occupied? ( n -- f )
-    here + c@ [char] - <> ;
+    gameboard + c@ [char] - <> ;
 
 : leftgreater? ( c n -- f )            \ TODO invert condition, simplify
     dup 0 = if
        2drop false exit then
     dup 1 - occupied? if
-       1 - here + c@ < else
+       1 - gameboard + c@ < else
        1 - recurse then ;
 
 : rightsmaller? ( c n -- f )           \ TODO invert condition, simplify
     dup 9 = if
        2drop false exit then
     dup 1 + occupied? if
-       1 + here + c@ > else
+       1 + gameboard + c@ > else
        1 + recurse then ;
 
 : validmove? ( c n -- f )              \ TODO simplify, refactor
@@ -76,13 +72,11 @@ s" xoshiro.fs" required
 
 \ Print header, get random number, initialize playing board with 10 '-'
 : boardinit ( -- )
-    saverandom64
     ." 0 1 2 3 4 5 6 7 8 9" cr
-    here 10 [char] - fill ;
+    gameboard 10 cells [char] - fill ;
 
 \ Seed PRNG, print game intro
 : gameinit ( -- )
-    xoshiro-timeseed                   \ seed random number generator
     cr
     ." Place random letters in free cells," cr
     ." keeping them in alphabetical order." cr
@@ -95,7 +89,7 @@ s" xoshiro.fs" required
        printboard
        randletter dup prompt getmove
        2dup validmove? dup if
-           -rot here + c! else
+           -rot gameboard + c! else
            -rot 2drop then             \ TODO 'gamescore' just once
     invert gamescore 10 = or until
     gamescore dup 10 = if ." CONGRATULATIONS!! " then

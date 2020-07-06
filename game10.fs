@@ -70,12 +70,12 @@ time&date + * + * + PRNGstate !
        i occupied? if 1 + then
     loop ;
 
-\ Print header, get random number, initialize playing board with 10 '-'
+\ Print header, initialize playing board with 10 '-'
 : boardinit ( -- )
     ." 0 1 2 3 4 5 6 7 8 9" cr
     gameboard 10 [char] - fill ;
 
-\ Seed PRNG, print game intro
+\ Print game intro
 : gameinit ( -- )
     cr
     ." Place random letters in free cells," cr

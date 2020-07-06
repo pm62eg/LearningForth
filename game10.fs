@@ -11,9 +11,11 @@ variable gameboard 9 allot             \ space for 10 chars
 variable PRNGstate
 
 : PRNGseed ( -- )
-    time&date + * +                    \ (Y + M) * D + h
-    time&date + + + + +                \ Y + M + D + h + m + s
-    + * + PRNGstate ! ;                \ don't multiply by 0
+    time&date
+    4 lshift +
+    3 lshift *
+    2 lshift +
+    1 lshift * + PRNGstate ! ;
 
 : PRNGnext ( -- u )                    \ adequate quality generator
     PRNGstate @ 1103515245 * 12345 + dup PRNGstate !

@@ -7,7 +7,7 @@
 \ When there is no possible move, the game is over.
 \ The score is the number of filled-in cells.
 
-variable gameboard 9 allot             \ space for 10 cells
+variable gameboard 9 allot             \ space for 10 chars
 variable PRNGstate
 
 time&date + * + * + PRNGstate !
@@ -73,7 +73,7 @@ time&date + * + * + PRNGstate !
 \ Print header, get random number, initialize playing board with 10 '-'
 : boardinit ( -- )
     ." 0 1 2 3 4 5 6 7 8 9" cr
-    gameboard 10 cells [char] - fill ;
+    gameboard 10 [char] - fill ;
 
 \ Seed PRNG, print game intro
 : gameinit ( -- )

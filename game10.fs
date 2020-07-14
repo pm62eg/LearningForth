@@ -21,9 +21,14 @@ variable PRNGstate
     PRNGstate @ 1103515245 * 12345 + dup PRNGstate !
     16 rshift 32767 and ;
 
+: unbiasedto ( n -- r )
+    32768 over / over * begin
+       PRNGnext 2dup < while
+       drop repeat
+    swap drop swap mod ;
+
 : randletter ( -- c )
-    PRNGnext 26 mod                    \ yeah, yeah: modulo bias
-    [char] a + ;                       \ adjust return character
+    26 unbiasedto [char] a + ;
 
 : printcell ( n -- )
     gameboard + c@ emit 32 emit ;
@@ -34,26 +39,21 @@ variable PRNGstate
 : occupied? ( n -- f )
     gameboard + c@ [char] - <> ;
 
-: leftgreater? ( c n -- f )            \ TODO invert condition, simplify
-    dup 0 = if
-       2drop false exit then
-    dup 1 - occupied? if
-       1 - gameboard + c@ < else
-       1 - recurse then ;
+: firstonright ( n -- m )
+    dup                                \ default return value
+    1 + 10 swap do i occupied? if drop i exit then loop ;
 
-: rightsmaller? ( c n -- f )           \ TODO invert condition, simplify
-    dup 9 = if
-       2drop false exit then
-    dup 1 + occupied? if
-       1 + gameboard + c@ > else
-       1 + recurse then ;
+: firstonleft ( n -- m )
+    dup                                \ default return value
+    0 = if exit then
+    dup 1 - 0 swap do i occupied? if drop i exit then -loop ;
 
 : validmove? ( c n -- f )              \ TODO simplify, refactor
     dup occupied? if
        2drop false exit then
-    2dup leftgreater? if
+    2dup firstonleft gameboard + c@ < if
        2drop false exit then
-    2dup rightsmaller? if
+    2dup firstonright gameboard + c@ > if
        2drop false exit then
     2drop true ;
 
